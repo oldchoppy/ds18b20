@@ -23,7 +23,7 @@ sensor=ds()
 #resolution - sensor.res=[9|10|11|12]
 
 while True:
-  temp=ds18b20.read(sensor)
+  temp=ds18b20.read(sensor) #this includes a 1 second delay for processing
   print(temp)
 ```
 ## License
