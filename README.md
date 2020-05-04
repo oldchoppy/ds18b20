@@ -9,7 +9,7 @@ Same directory as main.py in your MicroPython application. This was tested using
 
 ## Usage
 example:
-
+```python
 import ds18b20
 from ds18b20 import ds
 
@@ -25,6 +25,6 @@ sensor=ds()
 while True:
   temp=ds18b20.read(sensor)
   print(temp)
-
+```
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
