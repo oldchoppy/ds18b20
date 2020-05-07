@@ -6,62 +6,56 @@ import time
 class ds:
     def __init__(self, pin=2, unit='c', resolution=12):
         self.pin=pin
-        self.addr=None
+        self.no_addr=0
+        self.addr=self.getaddr()
         self.unit=unit
         self.res=resolution
-        self.getaddr()
     def getaddr(self):
         ow=OneWire(Pin(self.pin))
         a=ow.scan()
-        self.addr=a[0]
-
-def _res(self):
-    ow=OneWire(Pin(self.pin))
-    ow.reset()
-    ow.select_rom(self.addr)
-    ow.writebyte(0x4E)
-    if self.res==12:
-        ow.writebyte(0x7F)
-        ow.writebyte(0x7F)
-        ow.writebyte(0x7F)
-        print ("12 bit mode")
-    if self.res==11:
-        ow.writebyte(0x5F)
-        ow.writebyte(0x5F)
-        ow.writebyte(0x5F)
-        print ("11 bit mode")
-    if self.res==10:
-        ow.writebyte(0x3F)
-        ow.writebyte(0x3F)
-        ow.writebyte(0x3F)
-        print ("10 bit mode")
-    if self.res==9:
-        ow.writebyte(0x1F)
-        ow.writebyte(0x1F)
-        ow.writebyte(0x1F)
-        print ("9 bit mode")
-    ow.reset()
-
+        for i in a:
+            self.no_addr+=1
+        return a
+        
 def read(self):
-    _res(self)
+    if self.no_addr==0:
+        print ("no sensors detected")
+    if self.no_addr>=1:
+        temp_array=[]
+        print ('number of sensors: ',self.no_addr)
+        for i in range(1,self.no_addr+1):
+            temp_array.append(_request(self, self.addr[i-1]))
+            return temp_array       
+    
+def _request(self, addr):
+    _res(self,addr)
     ow=OneWire(Pin(self.pin))
     ow.reset()
-    ow.select_rom(self.addr)
-    ow.writebyte(0x44)
-    time.sleep(1)
-    ow.reset()
-    ow.select_rom(self.addr)
-    ow.writebyte(0xBE)
-    LSB=ow.readbyte()
-    MSB=ow.readbyte()
+    ow.select_rom(addr)
+    ow.writebyte(0x44) #command to take reading
+    if self.res==12: #the resolution determines the amount of time needed
+        time.sleep_ms(1000)
+    if self.res==11:
+        time.sleep_ms(400)
+    if self.res==10:
+        time.sleep_ms(200)
+    if self.res==9:
+        time.sleep_ms(100)
+    ow.reset() #reset required for data
+    ow.select_rom(addr)
+    ow.writebyte(0xBE) #command to send temperature data
+    #all nine bytes must be read
+    LSB=ow.readbyte() #least significant byte
+    MSB=ow.readbyte() #most significant byte
     ow.readbyte()
     ow.readbyte()
-    print (bin(ow.readbyte()))
+    ow.readbyte() #this is the configuration byte for resolution
     ow.readbyte()
     ow.readbyte()
     ow.readbyte()
     ow.readbyte()
-    ow.reset()
+    ow.reset() #reset at end of data transmission
+    #convert response to binary, format the binary string, and perform math
     d_LSB=float(0)
     d_MSB=float(0)
     count=0
@@ -79,9 +73,6 @@ def read(self):
         if len(b)<10:
             b4+="0"
     b5=b4+b
-##    print ("LSB: "+str(b))
-##    print("converted binary for LSB: "+str(b5))
-##    print ("MSB: "+str(b2))
     for i in b5:
         if count == 2:
             if i=='1':
@@ -110,7 +101,6 @@ def read(self):
         count+=1
     count=0
     sign=1
-##    print("converted binary for MSB: "+str(b2))
     for i in b2:
         if count == 6:
             if i=='1':
@@ -133,5 +123,30 @@ def read(self):
         print("TEMP F is: "+str(temp))
     return temp
 
-
+def _res(self,addr):
+    ow=OneWire(Pin(self.pin))
+    ow.reset()
+    ow.select_rom(addr)
+    ow.writebyte(0x4E)
+    if self.res==12:
+        ow.writebyte(0x7F)
+        ow.writebyte(0x7F)
+        ow.writebyte(0x7F)
+        print ("12 bit mode")
+    if self.res==11:
+        ow.writebyte(0x5F)
+        ow.writebyte(0x5F)
+        ow.writebyte(0x5F)
+        print ("11 bit mode")
+    if self.res==10:
+        ow.writebyte(0x3F)
+        ow.writebyte(0x3F)
+        ow.writebyte(0x3F)
+        print ("10 bit mode")
+    if self.res==9:
+        ow.writebyte(0x1F)
+        ow.writebyte(0x1F)
+        ow.writebyte(0x1F)
+        print ("9 bit mode")
+    ow.reset()  
 

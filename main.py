@@ -2,8 +2,8 @@ import time
 import ds18b20
 from ds18b20 import ds
 
-sensor=ds() #creates sensor object set to default pin 2, units in Celcius, resolution 12 bit
-#same result from sensor=ds(2,'c',12)
+time.sleep(1)
+sensor=ds(2,'f',12) #creates sensor object set to default pin 2, units in Celcius, resolution 12 bit
 #sensor.addr, sensor.pin, sensor.unit, and sensor.res values are now available
 #you can change the object parameters by the following:
 #pin number - sensor.pin=[number]
@@ -15,5 +15,4 @@ while True:
     #the builtin time.sleep is currently set to 1 second for all resolutions but will eventually
     #take less time for the lower resolutions once it has been added to the library
     print (temp)
-    time.sleep(2)
 
