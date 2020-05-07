@@ -1,7 +1,6 @@
 # ds18b20
 DS18B20 Library for MicroPython. I created this library to allow changing the resolution of the sensor. Right now, it works 
-for one (1) sensor per pin and 9,10,11,12 bit resolutions. The delay is one second for all resolutions but I am working on
-an update to increase the speed for lower resolutions.
+for one (1) sensor per pin and 9,10,11,12 bit resolutions. The delay is less for smaller resolution. At 12 bit resolution you will see to the nearest 0.0625 degree Celcius and 0.1125 degree Fahrenheit with 1 second delay. At 9 bit resolution you will see to the nearest 0.5 degree Celcius and 0.9 degree Fahrenheit with 100ms delay.
 
 ## Installation
 
